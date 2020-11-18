@@ -2,7 +2,7 @@
 
 It's a collection of most common used typescript decorators.
 
-## @Mixin
+## `@Mixin`
 
 Mixin is a pattern of `assigning new methods` and static properties to an existing class. It's called `composition`.
 This decorator just makes it easy, by using by abstracting applyMixin described in [typescript docs](https://www.typescriptlang.org/docs/handbook/mixins.html)
@@ -47,7 +47,7 @@ bird.fly();
 // => 🐦
 ```
 
-## @MapErrors and @MapErrorsAsync
+## `@MapErrors` and `@MapErrorsAsync`
 
 This mixin in used to `intercept errors` to catch and display more effectively one layer up
 
@@ -89,7 +89,7 @@ app.post("/finish-3ds", async (req, res) => {
 });
 ```
 
-## Class DIContainer
+## Class `DIContainer`
 
 This is simple implementation of `dependency injection` pattern in typescript without assigning any metadata.
 
@@ -145,6 +145,8 @@ class Database {
   @container.Inject('CONFIG_SERVICE')
   private readonly config: ConfigService;
 
-  public connection =
+  public connection = this.config.get('db.connectionString')
+
+  /* ... logic ... */
 }
 ```
