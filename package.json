@@ -13,7 +13,8 @@
   ],
   "directories": {
     "test": "./src/tests",
-    "lib": "./dist"
+    "lib": "./dist",
+    "doc": "./docs"
   },
   "scripts": {
     "test": "jest",

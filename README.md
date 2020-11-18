@@ -1,11 +1,14 @@
 # Sweet Decorators Lib
 
+See [`sweet-decorators` on npm](https://npmjs.com/package/sweet-decorators)
+
 It's a collection of most common used typescript decorators.
 
 ### Table of contents
 
 - [Sweet Decorators Lib](#sweet-decorators-lib)
     - [Table of contents](#table-of-contents)
+  - [Demo](#demo)
   - [`@Mixin`](#mixin)
   - [`@MapErrors` and `@MapErrorsAsync`](#maperrors-and-maperrorsasync)
   - [Class `DIContainer`](#class-dicontainer)
@@ -14,6 +17,10 @@ It's a collection of most common used typescript decorators.
   - [Method hooks: `@Before`, `@After`, `@Around`, `@BeforeAsync`, `@AfterAsync`, `@AroundAsync`](#method-hooks-before-after-around-beforeasync-afterasync-aroundasync)
       - [Simple Hooks Example](#simple-hooks-example)
       - [User Service Example](#user-service-example)
+
+## Demo
+
+![Code demo](docs/demo.png)
 
 ## `@Mixin`
 
