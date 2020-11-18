@@ -2,6 +2,19 @@
 
 It's a collection of most common used typescript decorators.
 
+### Table of contents
+
+- [Sweet Decorators Lib](#sweet-decorators-lib)
+    - [Table of contents](#table-of-contents)
+  - [`@Mixin`](#mixin)
+  - [`@MapErrors` and `@MapErrorsAsync`](#maperrors-and-maperrorsasync)
+  - [Class `DIContainer`](#class-dicontainer)
+      - [Example of injection of simple value](#example-of-injection-of-simple-value)
+      - [Example of providing a class](#example-of-providing-a-class)
+  - [Method hooks: `@Before`, `@After`, `@Around`, `@BeforeAsync`, `@AfterAsync`, `@AroundAsync`](#method-hooks-before-after-around-beforeasync-afterasync-aroundasync)
+      - [Simple Hooks Example](#simple-hooks-example)
+      - [User Service Example](#user-service-example)
+
 ## `@Mixin`
 
 Mixin is a pattern of `assigning new methods` and static properties to an existing class. It's called `composition`.
@@ -93,7 +106,7 @@ app.post("/finish-3ds", async (req, res) => {
 
 This is simple implementation of `dependency injection` pattern in typescript without assigning any metadata.
 
-**Example of injection of simple value**
+#### Example of injection of simple value
 
 ```typescript
 import { DIContainer } from "sweet-decorators";
@@ -124,7 +137,7 @@ console.log(client.secretToken === process.env.SECRET_TOKEN);
 // => true
 ```
 
-**Example of providing a class**
+#### Example of providing a class
 
 ```typescript
 import { DIContainer } from "sweet-decorators";
@@ -156,7 +169,7 @@ class Database {
 This decorators used to call methods around other methods. Its can help make
 code more concise by moving similar aspects out of the method.
 
-**Simple Example:**
+#### Simple Hooks Example
 
 ```typescript
 import { Before, After, Around } from "sweet-decorators";
@@ -172,14 +185,15 @@ function after(result: any[], ...args: any[]) {
 function around(fn: Function, ...args: any[]) {
   console.log("Before (Around)");
 
-  const result = fn(...args);
+  fn(...args);
 
   console.log("After (Around)");
 
-  return result;
+  return 43;
 }
 
 class Test {
+  // Order of decorators matters
   @Before(before)
   @After(after)
   @Around(around)
@@ -194,15 +208,18 @@ const result = new Test().example(1488);
 
 console.log(result === 42);
 
-// Before { args: [ 1488 ] }
-// Before (Around)
-// Call Example
-// After (Around)
-// After { result: 42, args: [ 1488 ] }
-// true
+/*
+Before { args: [ 1488 ] }
+Before (Around)
+Call Example
+After (Around)
+After { result: 43, args: [ 1488 ] } // If you swap `@After` and `@Around` in function declaration, result will be 42
+false 
+// False, because function `around` changed it
+*/
 ```
 
-**User Service Example:**
+#### User Service Example
 
 ```typescript
 import { AroundAsync, AfterAsync, BeforeAsync } from "sweet-decorators";

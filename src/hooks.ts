@@ -3,6 +3,10 @@
 // class with decorators.
 // Thats why im leaving this file untested
 
+/**
+ *
+ * @param callback Callback that receives all function params. **It will be called before function execution in the same context**
+ */
 export function Before(callback: (...args: any[]) => void): MethodDecorator {
   return function (_target, _prop, desc) {
     const fn = (desc.value as any) as Function;
@@ -16,6 +20,10 @@ export function Before(callback: (...args: any[]) => void): MethodDecorator {
   };
 }
 
+/**
+ *
+ * @param callback Callback that receives function's result as first argument and her params as rest. **It will be called after function execution in the same context**
+ */
 export function After(
   callback: (result: any, ...args: any[]) => void
 ): MethodDecorator {
@@ -33,6 +41,10 @@ export function After(
   };
 }
 
+/**
+ *
+ * @param callback Callback that receives the function as first param and her arguments as rest. **It will be called instead of the function in same context. It must return a result**
+ */
 export function Around(
   callback: (fn: Function, ...args: any[]) => any
 ): MethodDecorator {
@@ -47,6 +59,12 @@ export function Around(
   };
 }
 
+/**
+ * Async version of `@Before` decorator
+ * @see Before
+ *
+ * @param callback
+ */
 export function BeforeAsync(
   callback: (...args: any[]) => void | Promise<void>
 ): MethodDecorator {
@@ -62,6 +80,12 @@ export function BeforeAsync(
   };
 }
 
+/**
+ * Async version of `@After` decorator
+ * @see After
+ *
+ * @param callback
+ */
 export function AfterAsync(
   callback: (result: any, ...args: any[]) => void | Promise<void>
 ): MethodDecorator {
@@ -79,6 +103,12 @@ export function AfterAsync(
   };
 }
 
+/**
+ * Async version of `@Around` decorator
+ * @see Around
+ *
+ * @param callback
+ */
 export function AroundAsync(
   callback: (fn: Function, ...args: any[]) => any | Promise<any>
 ): MethodDecorator {
