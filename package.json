@@ -1,6 +1,6 @@
 {
   "name": "sweet-decorators",
-  "version": "1.1.0",
+  "version": "1.0.1",
   "description": "Library of utility typescript decorators",
   "main": "dist/index.js",
   "type": "commonjs",
@@ -27,9 +27,7 @@
     "typescript",
     "ts",
     "decorators",
-    "mixin",
-    "di",
-    "error handling"
+    "mixin"
   ],
   "author": "AlexXanderGrib <me@alexxgrib.me> (https://alexxgrib.me)",
   "license": "MIT",
