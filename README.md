@@ -5,7 +5,7 @@ It's a collection of most common used typescript decorators.
 ## `@Mixin`
 
 Mixin is a pattern of `assigning new methods` and static properties to an existing class. It's called `composition`.
-This decorator just makes it easy, by using by abstracting applyMixin described in [typescript docs](https://www.typescriptlang.org/docs/handbook/mixins.html)
+This decorator just makes it easy, by using by abstracting `applyMixin` function described in [typescript docs](https://www.typescriptlang.org/docs/handbook/mixins.html)
 
 **Example**
 
@@ -148,5 +148,100 @@ class Database {
   public connection = this.config.get('db.connectionString')
 
   /* ... logic ... */
+}
+```
+
+## Method hooks: `@Before`, `@After`, `@Around`, `@BeforeAsync`, `@AfterAsync`, `@AroundAsync`
+
+This decorators used to call methods around other methods. Its can help make
+code more concise by moving similar aspects out of the method.
+
+**Simple Example:**
+
+```typescript
+import { Before, After, Around } from "sweet-decorators";
+
+function before(...args: any[]) {
+  console.log("Before", { args });
+}
+
+function after(result: any[], ...args: any[]) {
+  console.log("After", { result, args });
+}
+
+function around(fn: Function, ...args: any[]) {
+  console.log("Before (Around)");
+
+  const result = fn(...args);
+
+  console.log("After (Around)");
+
+  return result;
+}
+
+class Test {
+  @Before(before)
+  @After(after)
+  @Around(around)
+  example(..._args: any[]) {
+    console.log("Call Example");
+
+    return 42;
+  }
+}
+
+const result = new Test().example(1488);
+
+console.log(result === 42);
+
+// Before { args: [ 1488 ] }
+// Before (Around)
+// Call Example
+// After (Around)
+// After { result: 42, args: [ 1488 ] }
+// true
+```
+
+**User Service Example:**
+
+```typescript
+import { AroundAsync, AfterAsync, BeforeAsync } from "sweet-decorators";
+
+function checkAuthorization(this: UserService) {
+  if (!this.currentSession) {
+    throw new UserError("Unauthorized");
+  }
+}
+
+async function updateLastLogin(this: UserService, result: any, ...args: any[]) {
+  if (result.success) {
+    await this.db.query(/* ... */);
+  }
+}
+
+async function handleErrors(this: UserService, fn: Function, ...args: any[]) {
+  try {
+    return await fn(...args);
+  } catch (error) {
+    if (error instanceof DBError) {
+      throw new UserError("Database got wrong");
+    }
+
+    throw error;
+  }
+}
+
+class UserService {
+  @AroundAsync(handleErrors) // First decorator wraps all next
+  // If you put it ^ last. It will wrap only the function content.
+  // That's how decorators work
+  // https://www.typescriptlang.org/docs/handbook/decorators.html#decorator-composition
+  @AfterAsync(updateLastLogin)
+  @BeforeAsync(checkAuthorization)
+  async getPersonalData() {
+    /* ... */
+  }
+
+  /* ... */
 }
 ```
