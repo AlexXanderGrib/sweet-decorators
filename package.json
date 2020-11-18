@@ -1,0 +1,42 @@
+{
+  "name": "sweet-decorators",
+  "version": "1.0.0",
+  "description": "Library of utility typescript decorators",
+  "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "test": "./src/tests",
+    "lib": "./dist"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexXanderGrib/sweet-decorators.git"
+  },
+  "keywords": [
+    "typescript",
+    "ts",
+    "decorators",
+    "mixin"
+  ],
+  "author": "AlexXanderGrib <me@alexxgrib.me> (https://alexxgrib.me)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlexXanderGrib/sweet-decorators/issues"
+  },
+  "homepage": "https://github.com/AlexXanderGrib/sweet-decorators#readme",
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "ts-jest": "^26.4.4",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.5"
+  }
+}
