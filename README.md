@@ -3,7 +3,7 @@
 [![license MIT](https://img.shields.io/npm/l/sweet-decorators?style=flat-square)](https://github.com/AlexXanderGrib/sweet-decorators/blob/master/LICENSE)
 [![npm](https://img.shields.io/npm/v/sweet-decorators?style=flat-square)](https://npmjs.com/package/sweet-decorators)
 [![GitHub](https://img.shields.io/github/stars/AlexXanderGrib/sweet-decorators?style=flat-square)](https://github.com/AlexXanderGrib/sweet-decorators)
-![last commit](https://img.shields.io/github/last-commit/AlexXanderGrib/sweet-decorators?style=flat-square)
+[![last commit](https://img.shields.io/github/last-commit/AlexXanderGrib/sweet-decorators?style=flat-square)](#)
 
 It's a collection of most common used typescript decorators.
 
