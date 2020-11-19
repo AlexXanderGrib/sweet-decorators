@@ -29,7 +29,13 @@
     "typescript",
     "ts",
     "decorators",
-    "mixin"
+    "mixin",
+    "di",
+    "hooks",
+    "dependency injection",
+    "method hooks",
+    "error handling",
+    "meta"
   ],
   "author": "AlexXanderGrib <me@alexxgrib.me> (https://alexxgrib.me)",
   "license": "MIT",
