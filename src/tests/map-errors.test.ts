@@ -3,19 +3,23 @@ import { MapErrors, MapErrorsAsync } from "../map-errors";
 class MockError extends Error {}
 class GoodError extends Error {}
 class BadError extends Error {}
+class AltError extends Error {}
 
-const mapper = (error: Error) =>
-  error instanceof MockError ? new GoodError(error.message) : error;
+const mockErrorMapper = (error: Error) =>
+  error instanceof MockError ? new GoodError(error.message) : undefined;
+
+const badErrorMapper = (error: Error) =>
+  error instanceof BadError ? new AltError(error.message) : undefined;
 
 class Test {
-  @MapErrors(mapper)
+  @MapErrors(mockErrorMapper, badErrorMapper)
   sync(expected = true) {
     if (expected) throw new MockError();
 
     throw new BadError();
   }
 
-  @MapErrorsAsync(mapper)
+  @MapErrorsAsync(mockErrorMapper, badErrorMapper)
   async async(expected = true) {
     if (expected) throw new MockError();
 
@@ -40,7 +44,7 @@ describe("Map Errors Decorator", () => {
 
       fail("Sync bad error wasn't thrown");
     } catch (error) {
-      expect(error).toBeInstanceOf(BadError);
+      expect(error).toBeInstanceOf(AltError);
     }
   });
 
@@ -58,7 +62,7 @@ describe("Map Errors Decorator", () => {
 
       fail("Async bad error wasn't thrown");
     } catch (error) {
-      expect(error).toBeInstanceOf(BadError);
+      expect(error).toBeInstanceOf(AltError);
     }
   });
 });

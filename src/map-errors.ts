@@ -1,4 +1,6 @@
-export function MapErrors(mapper: (error: Error) => Error): MethodDecorator {
+export function MapErrors(
+  ...mappers: ((error: Error) => Error | undefined)[]
+): MethodDecorator {
   return function (_target, _prop, desc) {
     const fn = (desc.value as any) as Function;
 
@@ -6,7 +8,13 @@ export function MapErrors(mapper: (error: Error) => Error): MethodDecorator {
       try {
         return fn.apply(this, args);
       } catch (error) {
-        throw mapper(error);
+        for (const mapper of mappers) {
+          const result = mapper(error);
+
+          if (result) throw result;
+        }
+
+        throw error;
       }
     };
 
@@ -15,7 +23,9 @@ export function MapErrors(mapper: (error: Error) => Error): MethodDecorator {
 }
 
 export function MapErrorsAsync(
-  mapper: (error: Error) => Error | Promise<Error>
+  ...mappers: ((
+    error: Error
+  ) => Error | undefined | Promise<Error | undefined>)[]
 ): MethodDecorator {
   return function (_target, _prop, desc) {
     const fn = (desc.value as any) as Function;
@@ -24,7 +34,13 @@ export function MapErrorsAsync(
       try {
         return await fn.apply(this, args);
       } catch (error) {
-        throw await mapper(error);
+        for (const mapper of mappers) {
+          const result = await mapper(error);
+
+          if (result) throw result;
+        }
+
+        throw error;
       }
     };
 

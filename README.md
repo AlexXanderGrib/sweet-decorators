@@ -134,7 +134,7 @@ import { MapErrorsAsync } from "sweet-decorators";
 import { FetchError } from "node-fetch";
 import { PaymentError } from "../errors";
 
-const mapper = (error: Error): Error => {
+const fetchErrorMapper = (error: Error) => {
   if (error instanceof FetchError) {
     return new PaymentError(
       "Cannot connect to remote endpoint",
@@ -142,11 +142,23 @@ const mapper = (error: Error): Error => {
     );
   }
 
-  return error;
+  return;
+};
+
+const refErrorMapper = (error: Error) => {
+  if (error instanceof ReferenceError) {
+    return new PaymentError(
+      "Internal reference error",
+      PaymentError.Code.InternalError
+    );
+  }
+
+  return;
 };
 
 class PaymentSystem {
-  @MapErrorsAsync(mapper)
+  // You can use multiple mappers for handle different types of errors separately
+  @MapErrorsAsync(fetchErrorMapper, refErrorMapper)
   async finishPayment(id: string) {
     /* ... */
   }
@@ -170,8 +182,9 @@ app.post("/finish-3ds", async (req, res) => {
 #### `@MapErrors` tips and best practices
 
 1. Mapper must return error (at least something nested from `Error` class)
-2. Mapper must not throw an error
-3. Mapper must not have slow side effects (be perfect if the only side effect is sync & atomic logging)
+2. Mapper must return `undefined`, to pass control to next mapper
+3. Mapper must not throw an error
+4. Mapper must not have slow side effects (be perfect if the only side effect is sync & atomic logging)
 
 ## Class `DIContainer`
 
