@@ -10,6 +10,7 @@ It's a collection of most common used typescript decorators.
     - [Table of contents](#table-of-contents)
   - [Demo](#demo)
   - [`@Mixin`](#mixin)
+  - [Meta assignment via `@Assign` and `@Assign.<Key>`](#meta-assignment-via-assign-and-assignkey)
   - [`@MapErrors` and `@MapErrorsAsync`](#maperrors-and-maperrorsasync)
   - [Class `DIContainer`](#class-dicontainer)
       - [Example of injection of simple value](#example-of-injection-of-simple-value)
@@ -65,6 +66,35 @@ human.swim();
 const bird = new Bird();
 bird.fly();
 // => 🐦
+```
+
+## Meta assignment via `@Assign` and `@Assign.<Key>`
+
+This mixin is used in pair with `readMeta` method. Here is the example:
+
+```typescript
+import { Assign, readMeta } from "sweet-decorators";
+
+// You can use multiple syntaxes of the decorator
+@Assign({ BASE_BEHAVIOR: "passive" }) // If u pass object, his props will be merged with current meta
+@Assign("isTest", process.env.NODE_ENV === "test") // You can set prop directly
+@Assign.ErrorClass(Error) // Or you can use @Assign.<key>(<value>) because its more beautiful alt to @Assign('<key>', <value>)
+class Human {
+  // All these decorators also applies to methods
+  @Assign({ IS_ACTION: true })
+  @Assign.ActionType("MOVEMENT")
+  @Assign(Symbol("ENTITY_TOKEN"), "X_HUMAN_ENTITY")
+  @Assign({ IS_ACTION: false }) // will be overridden
+  walk() {}
+}
+
+const human = new Human();
+
+console.log(readMeta(human));
+// => { BASE_BEHAVIOR: "passive", isTest: false, ErrorClass: Error }
+
+console.log(readMeta(human.walk));
+// => { IS_ACTION: true, ActionType: "MOVEMENT", Symbol(ENTITY_TOKEN): "X_HUMAN_ENTITY" }
 ```
 
 ## `@MapErrors` and `@MapErrorsAsync`
