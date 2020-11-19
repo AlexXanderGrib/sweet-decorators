@@ -43,7 +43,7 @@ yarn add sweet-decorators
 
 ## 👀 Demo
 
-[Code demo](docs/demo.png)
+![Code demo](docs/demo.png)
 
 ## `@Mixin`
 
