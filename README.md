@@ -21,7 +21,7 @@ It's a collection of most common used typescript decorators.
 
 ## Demo
 
-![Code demo](docs/demo.png)
+[![Code demo (Image does not work on npm because i don't want to include it in package. You can see it on Github by clicking on this link)](docs/demo.png)](https://github.com/AlexXanderGrib/sweet-decorators#demo)
 
 ## `@Mixin`
 
