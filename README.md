@@ -1,8 +1,11 @@
 # 🍬 Sweet Decorators Lib
 
-It's a collection of most common used typescript decorators.
+[![license MIT](https://img.shields.io/npm/l/sweet-decorators?style=flat-square)](https://github.com/AlexXanderGrib/sweet-decorators/blob/master/LICENSE)
+[![npm](https://img.shields.io/npm/v/sweet-decorators?style=flat-square)](https://npmjs.com/package/sweet-decorators)
+[![GitHub](https://img.shields.io/github/stars/AlexXanderGrib/sweet-decorators?style=flat-square)](https://github.com/AlexXanderGrib/sweet-decorators)
+![last commit](https://img.shields.io/github/last-commit/AlexXanderGrib/sweet-decorators?style=flat-square)
 
-See [`sweet-decorators` on npm](https://npmjs.com/package/sweet-decorators)
+It's a collection of most common used typescript decorators.
 
 ## Before You Begin
 
