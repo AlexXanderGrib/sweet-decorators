@@ -30,13 +30,16 @@ yarn add sweet-decorators
   - [👀 Demo](#-demo)
   - [`@Mixin`](#mixin)
   - [Meta assignment via `@Assign` and `@Assign.<Key>`](#meta-assignment-via-assign-and-assignkey)
+      - [Meta assignment and reading tips and best practices](#meta-assignment-and-reading-tips-and-best-practices)
   - [`@MapErrors` and `@MapErrorsAsync`](#maperrors-and-maperrorsasync)
+      - [`@MapErrors` tips and best practices](#maperrors-tips-and-best-practices)
   - [Class `DIContainer`](#class-dicontainer)
       - [Example of injection of simple value](#example-of-injection-of-simple-value)
       - [Example of providing a class](#example-of-providing-a-class)
   - [Method hooks: `@Before`, `@After`, `@Around`, `@BeforeAsync`, `@AfterAsync`, `@AroundAsync`](#method-hooks-before-after-around-beforeasync-afterasync-aroundasync)
       - [Simple Hooks Example](#simple-hooks-example)
       - [User Service Example](#user-service-example)
+      - [Hooks best practices & capabilities](#hooks-best-practices--capabilities)
 
 ## 👀 Demo
 
@@ -116,6 +119,12 @@ console.log(readMeta(human.walk));
 // => { IS_ACTION: true, ActionType: "MOVEMENT", Symbol(ENTITY_TOKEN): "X_HUMAN_ENTITY" }
 ```
 
+#### Meta assignment and reading tips and best practices
+
+1. Meta is accessible in other(upper) decorators
+2. If you need to set **more than 2** meta props, please use **object syntax**
+3. Use meta as simple **key/value dto storage**. Do not try to put here functions
+
 ## `@MapErrors` and `@MapErrorsAsync`
 
 This decorator in used to `intercept errors` to catch and display more effectively one layer up
@@ -157,6 +166,12 @@ app.post("/finish-3ds", async (req, res) => {
   }
 });
 ```
+
+#### `@MapErrors` tips and best practices
+
+1. Mapper must return error (at least something nested from `Error` class)
+2. Mapper must not throw an error
+3. Mapper must not have slow side effects (be perfect if the only side effect is sync & atomic logging)
 
 ## Class `DIContainer`
 
@@ -318,3 +333,13 @@ class UserService {
   /* ... */
 }
 ```
+
+#### Hooks best practices & capabilities
+
+Section may contain Cap's notices.
+
+1. Put your **validation** to `@Before`
+2. Put your **metrics** to `@Around`
+3. Put your **side effects** to `@After`
+4. Put **error handling** to `@Around`, except your project is good at using `either monad`
+5. Mix more than 2 of these decorators together **only** if you strongly know order of execution. If not, read the [warning](#before-you-begin) and linked article
