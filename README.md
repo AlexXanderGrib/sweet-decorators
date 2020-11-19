@@ -1,14 +1,33 @@
-# Sweet Decorators Lib
-
-See [`sweet-decorators` on npm](https://npmjs.com/package/sweet-decorators)
+# 🍬 Sweet Decorators Lib
 
 It's a collection of most common used typescript decorators.
 
-### Table of contents
+See [`sweet-decorators` on npm](https://npmjs.com/package/sweet-decorators)
 
-- [Sweet Decorators Lib](#sweet-decorators-lib)
-    - [Table of contents](#table-of-contents)
-  - [Demo](#demo)
+## Before You Begin
+
+**⚠️ Please, consider to read [Microsoft's article about Decorators Composition](https://www.typescriptlang.org/docs/handbook/decorators.html#decorator-composition) ⚠️**
+
+### 📦 Installation (`npm`)
+
+```bash
+npm i --save sweet-decorators
+```
+
+### 📦 Installation (`yarn`)
+
+```bash
+yarn add sweet-decorators
+```
+
+### 📕 Table of contents
+
+- [🍬 Sweet Decorators Lib](#-sweet-decorators-lib)
+  - [Before You Begin](#before-you-begin)
+    - [📦 Installation (`npm`)](#-installation-npm)
+    - [📦 Installation (`yarn`)](#-installation-yarn)
+    - [📕 Table of contents](#-table-of-contents)
+  - [👀 Demo](#-demo)
   - [`@Mixin`](#mixin)
   - [Meta assignment via `@Assign` and `@Assign.<Key>`](#meta-assignment-via-assign-and-assignkey)
   - [`@MapErrors` and `@MapErrorsAsync`](#maperrors-and-maperrorsasync)
@@ -19,7 +38,7 @@ It's a collection of most common used typescript decorators.
       - [Simple Hooks Example](#simple-hooks-example)
       - [User Service Example](#user-service-example)
 
-## Demo
+## 👀 Demo
 
 [![Code demo (Image does not work on npm because i don't want to include it in package. You can see it on Github by clicking on this link)](docs/demo.png)](https://github.com/AlexXanderGrib/sweet-decorators#demo)
 
