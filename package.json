@@ -1,10 +1,10 @@
 {
   "name": "sweet-decorators",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Library of utility typescript decorators",
   "main": "dist/index.js",
   "type": "commonjs",
-  "types": "./dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
