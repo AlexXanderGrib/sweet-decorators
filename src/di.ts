@@ -1,10 +1,15 @@
 type ProvideHandler = (key: any, value: any) => void;
+type Reference<value> = { value: value };
+type UnsubscribeCallback = () => void;
 
+/**
+ * Dependency injection container
+ */
 export class DIContainer<
   Key extends string | symbol = string | symbol,
   Value extends any = any
 > {
-  public readonly deps = new Map<Key, { value: Value | undefined }>();
+  public readonly deps = new Map<Key, Reference<Value | undefined>>();
   private provideHandlers: ProvideHandler[] = [];
 
   /**
@@ -12,14 +17,14 @@ export class DIContainer<
    * By default value is undefined and when the dependency will be
    * provided, value automatically changes.
    *
-   * @param name Dependency name
-   * @returns {{ value: Value | undefined }} Object that references to value
+   * @param {string} name Dependency name
+   * @return {Reference<Value | undefined>} Object that references to value
    */
-  public getRef(name: Key): { value: Value | undefined } {
-    const ref = this.deps.get(name) || { value: undefined };
-    this.deps.set(name, ref);
+  public getRef(name: Key): Reference<Value | undefined> {
+    const reference = this.deps.get(name) || { value: undefined };
+    this.deps.set(name, reference);
 
-    return ref;
+    return reference;
   }
 
   /**
@@ -28,12 +33,12 @@ export class DIContainer<
    * @param {Key} name
    * @param {Value} value
    */
-  public provide(name: Key, value: Value) {
-    const ref = this.getRef(name);
+  public provide(name: Key, value: Value): void {
+    const reference = this.getRef(name);
 
-    ref.value = value;
+    reference.value = value;
 
-    this.provideHandlers.forEach((cb) => cb(name, value));
+    this.provideHandlers.forEach((callback) => callback(name, value));
   }
 
   /**
@@ -42,7 +47,7 @@ export class DIContainer<
    * `getRef` method.
    *
    * @param {Key} name
-   * @returns {Value | undefined} value
+   * @return {Value | undefined} value
    */
   public inject(name: Key): Value | undefined {
     return this.getRef(name).value;
@@ -56,6 +61,8 @@ export class DIContainer<
    *
    * @param {Key} name
    *
+   * @return {PropertyDecorator}
+   *
    * @example
    *
    * @Inject('SECRET_KEY') // <-- this decorator
@@ -64,6 +71,7 @@ export class DIContainer<
    *
    */
   public Inject(name: Key): PropertyDecorator {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const container = this;
 
     return function (target: any, key: string | symbol) {
@@ -80,11 +88,12 @@ export class DIContainer<
    *
    * ### Please do not use `constructor()` params. Because instantiation is not under your control
    *
-   * @param name
+   * @param {Key} name
+   * @return {ClassDecorator}
    */
   public Provide(name: Key): ClassDecorator {
     return (target) => {
-      const instance = this.instantiate(target);
+      const instance = this._instantiate(target);
 
       this.provide(name, instance);
     };
@@ -96,7 +105,8 @@ export class DIContainer<
    *
    * ### If dependency will not be provided with the key, promise will be hanged
    *
-   * @param dependency
+   * @param {Key} dependency
+   * @return {Promise<*>}
    */
   public injectAsync<T extends Value = Value>(dependency: Key): Promise<T> {
     return new Promise<any>((resolve) => {
@@ -115,18 +125,25 @@ export class DIContainer<
    * Registers a callback to `provide` method and `@Provide` decorator.
    * Calls **every time** when someone something provides inside current container.
    *
-   * @param {ProvideHandler} cb
-   * @returns {() => void} Unsubscribe function
+   * @param {ProvideHandler} callback
+   * @return {UnsubscribeCallback} Unsubscribe function
    */
-  public subscribe(cb: ProvideHandler): () => void {
-    this.provideHandlers.push(cb);
+  public subscribe(callback: ProvideHandler): UnsubscribeCallback {
+    this.provideHandlers.push(callback);
 
     return () => {
-      this.provideHandlers = this.provideHandlers.filter((fn) => fn !== cb);
+      this.provideHandlers = this.provideHandlers.filter(
+        (function_) => function_ !== callback
+      );
     };
   }
 
-  private instantiate(target: any): any {
+  /**
+   *
+   * @param {*} target
+   * @return {*}
+   */
+  private _instantiate(target: any): any {
     return new target();
   }
 }

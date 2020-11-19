@@ -1,7 +1,15 @@
+/* eslint-disable security/detect-object-injection */
 export const kMeta = Symbol("META");
 
 type Key = string | symbol | number;
 
+/**
+ *
+ * @param {*} subject
+ * @param {Key | object} key
+ * @param {*} value
+ *
+ */
 function assignMeta(subject: any, key: Key | object, value?: any) {
   const object = typeof key === "object" ? key : { [key]: value };
 
@@ -46,8 +54,14 @@ interface Assign {
   [key: string]: (value: any) => ClassAndMethodDecorator;
 }
 
+/**
+ *
+ * @param {Key | object} key
+ * @param {*} value
+ * @return {ClassAndMethodDecorator}
+ */
 function assign(key: Key | object, value?: any): ClassAndMethodDecorator {
-  return function (target: any, _prop: Key, desc: PropertyDescriptor) {
+  return function (target: any, _property: Key, desc: PropertyDescriptor) {
     if (typeof target === "function") {
       assignMeta(target.prototype, key, value);
       return target;
@@ -58,15 +72,22 @@ function assign(key: Key | object, value?: any): ClassAndMethodDecorator {
 }
 
 export const Assign: Assign = new Proxy(assign, {
-  get(target, prop) {
-    if (prop in target) return target[prop as keyof typeof target];
+  get(target, property) {
+    if (property in target) return target[property as keyof typeof target];
 
-    return (value: any) => assign(prop, value);
+    return (value: any) => assign(property, value);
   }
 }) as any;
 
-export function readMeta(target: any, key?: Key): any {
-  const meta = target[kMeta] ?? {};
+/**
+ * Reads & return meta, assigned by `@Assign` decorator
+ *
+ * @param {*} target Class or method that contains any meta
+ * @param {Key=} key Meta key
+ * @return {*} Meta value or full object, if `key` argument didn't passed
+ */
+export function readMeta(target: object | Function, key?: Key): any {
+  const meta = (target as any)[kMeta] ?? {};
 
   if (key) return meta[key];
 

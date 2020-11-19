@@ -4,58 +4,70 @@
 // Thats why im leaving this file untested
 
 /**
+ * Method decorator, that executes `callback` before the method's execution in the method's context(this)
  *
- * @param callback Callback that receives all function params. **It will be called before function execution in the same context**
+ * **Useful for** - params pre-validation
+ *
+ * @param {Function} callback Callback that receives all method's parameters
+ * @return {MethodDecorator}
  */
-export function Before(callback: (...args: any[]) => void): MethodDecorator {
-  return function (_target, _prop, desc) {
-    const fn = (desc.value as any) as Function;
+export function Before(callback: (...parameters: any[]) => void): MethodDecorator {
+  return function (_target, _property, descriptor) {
+    const function_ = (descriptor.value as any) as Function;
 
-    (desc as any).value = function (...args: any[]) {
-      callback.apply(this, args);
-      return fn.apply(this, args);
+    (descriptor as any).value = function (...parameters: any[]) {
+      callback.apply(this, parameters);
+      return function_.apply(this, parameters);
     };
 
-    return desc;
+    return descriptor;
   };
 }
 
 /**
+ * Method decorator, that executes `callback` after the method's execution and in the same context(this).
  *
- * @param callback Callback that receives function's result as first argument and her params as rest. **It will be called after function execution in the same context**
+ * **Useful for** - side effects (close db connection, send logs, etc...)
+ *
+ * @param {Function} callback Callback that receives method's result as first argument and his parameters as rest.
+ * @return {MethodDecorator}
  */
 export function After(
-  callback: (result: any, ...args: any[]) => void
+  callback: (result: any, ...parameters: any[]) => void
 ): MethodDecorator {
-  return function (_target, _prop, desc) {
-    const fn = (desc.value as any) as Function;
+  return function (_target, _property, descriptor) {
+    const function_ = (descriptor.value as any) as Function;
 
-    (desc as any).value = function (...args: any[]) {
-      const result = fn.apply(this, args);
-      callback.call(this, result, ...args);
+    (descriptor as any).value = function (...parameters: any[]) {
+      const result = function_.apply(this, parameters);
+      callback.call(this, result, ...parameters);
 
       return result;
     };
 
-    return desc;
+    return descriptor;
   };
 }
 
 /**
+ * Method decorator, that calls `callback` instead of the method
  *
- * @param callback Callback that receives the function as first param and her arguments as rest. **It will be called instead of the function in same context. It must return a result**
+ * **Useful for** - collecting metrics & handle errors
+ *
+ * @param {Function} callback Callback that receives the method as first argument and his parameters as rest.
+ * @return {MethodDecorator}
  */
 export function Around(
-  callback: (fn: Function, ...args: any[]) => any
+  callback: (method: Function, ...parameters: any[]) => any
 ): MethodDecorator {
-  return function (_target, _prop, desc) {
-    const fn = (desc.value as any) as Function;
+  return function (_target, _property, descriptor) {
+    const function_ = (descriptor.value as any) as Function;
 
-    (desc as any).value = function (...args: any[]) {
-      return callback.call(this, fn.bind(this), ...args);
+    (descriptor as any).value = function (...parameters: any[]) {
+      return callback.call(this, function_.bind(this), ...parameters);
     };
 
-    return desc;
+    return descriptor;
   };
 }
 
@@ -63,20 +75,21 @@ export function Around(
  * Async version of `@Before` decorator
  * @see Before
  *
- * @param callback
+ * @param {Function} callback
+ * @return {MethodDecorator}
  */
 export function BeforeAsync(
-  callback: (...args: any[]) => void | Promise<void>
+  callback: (...parameters: any[]) => void | Promise<void>
 ): MethodDecorator {
-  return function (_target, _prop, desc) {
-    const fn = (desc.value as any) as Function;
+  return function (_target, _property, descriptor) {
+    const function_ = (descriptor.value as any) as Function;
 
-    (desc as any).value = async function (...args: any[]) {
-      await callback.apply(this, args);
-      return await fn.apply(this, args);
+    (descriptor as any).value = async function (...parameters: any[]) {
+      await callback.apply(this, parameters);
+      return await function_.apply(this, parameters);
     };
 
-    return desc;
+    return descriptor;
   };
 }
 
@@ -84,17 +97,18 @@ export function BeforeAsync(
  * Async version of `@After` decorator
  * @see After
  *
- * @param callback
+ * @param {Function} callback
+ * @return {MethodDecorator}
  */
 export function AfterAsync(
-  callback: (result: any, ...args: any[]) => void | Promise<void>
+  callback: (result: any, ...parameters: any[]) => void | Promise<void>
 ): MethodDecorator {
-  return function (_target, _prop, desc) {
-    const fn = (desc.value as any) as Function;
+  return function (_target, _property, desc) {
+    const function_ = (desc.value as any) as Function;
 
-    (desc as any).value = async function (...args: any[]) {
-      const result = await fn.apply(this, args);
-      await callback.call(this, result, ...args);
+    (desc as any).value = async function (...parameters: any[]) {
+      const result = await function_.apply(this, parameters);
+      await callback.call(this, result, ...parameters);
 
       return result;
     };
@@ -107,18 +121,19 @@ export function AfterAsync(
  * Async version of `@Around` decorator
  * @see Around
  *
- * @param callback
+ * @param {Function} callback
+ * @return {MethodDecorator}
  */
 export function AroundAsync(
-  callback: (fn: Function, ...args: any[]) => any | Promise<any>
+  callback: (method: Function, ...parameters: any[]) => any | Promise<any>
 ): MethodDecorator {
-  return function (_target, _prop, desc) {
-    const fn = (desc.value as any) as Function;
+  return function (_target, _property, descriptor) {
+    const function_ = (descriptor.value as any) as Function;
 
-    (desc as any).value = async function (...args: any[]) {
-      return await callback.call(this, fn.bind(this), ...args);
+    (descriptor as any).value = async function (...parameters: any[]) {
+      return await callback.call(this, function_.bind(this), ...parameters);
     };
 
-    return desc;
+    return descriptor;
   };
 }
