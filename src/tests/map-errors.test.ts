@@ -1,4 +1,4 @@
-import { MapErrors, MapErrorsAsync } from "../map-errors.decorator";
+import { MapErrors, MapErrorsAsync } from "../map-errors";
 
 class MockError extends Error {}
 class GoodError extends Error {}
