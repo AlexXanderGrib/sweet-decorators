@@ -89,7 +89,7 @@ bird.fly();
 
 ## Meta assignment via `@Assign` and `@Assign.<Key>`
 
-This mixin is used in pair with `readMeta` method. Here is the example:
+This decorator is used in pair with `readMeta` method. Here is the example:
 
 ```typescript
 import { Assign, readMeta } from "sweet-decorators";
@@ -118,7 +118,7 @@ console.log(readMeta(human.walk));
 
 ## `@MapErrors` and `@MapErrorsAsync`
 
-This mixin in used to `intercept errors` to catch and display more effectively one layer up
+This decorator in used to `intercept errors` to catch and display more effectively one layer up
 
 ```typescript
 import { MapErrorsAsync } from "sweet-decorators";
