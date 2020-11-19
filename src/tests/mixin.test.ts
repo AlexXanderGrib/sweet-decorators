@@ -1,4 +1,4 @@
-import { Mixin } from "../mixin.decorator";
+import { Mixin } from "../mixin";
 
 class Swimmable {
   swim() {
