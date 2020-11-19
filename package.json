@@ -18,7 +18,8 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc --project ./tsconfig.build.json"
+    "build": "tsc --project ./tsconfig.build.json",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
