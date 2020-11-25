@@ -43,6 +43,10 @@ yarn add sweet-decorators
       - [Simple Hooks Example](#simple-hooks-example)
       - [User Service Example](#user-service-example)
       - [Hooks best practices & capabilities](#hooks-best-practices--capabilities)
+  - [Memoization of methods via `@Memoize` & `@MemoizeAsync`](#memoization-of-methods-via-memoize--memoizeasync)
+      - [Memo's Limitations](#memos-limitations)
+      - [Example of using @Memoize with Dates](#example-of-using-memoize-with-dates)
+      - [Memo Tips & Best Practices](#memo-tips--best-practices)
 
 ## 👀 Demo
 
@@ -359,3 +363,49 @@ Section may contain Cap's notices.
 3. Put your **side effects** to `@After`
 4. Put **error handling** to `@Around`, except your project is good at using `either monad`
 5. Mix more than 2 of these decorators together **only** if you strongly know order of execution. If not, read the [warning](#before-you-begin) and linked article
+
+## Memoization of methods via `@Memoize` & `@MemoizeAsync`
+
+This decorator is used to easily create memoized functions.
+
+#### Memo's Limitations
+
+**By default, memo storage uses storage, that caches method's result only by `1st parameter`**. If you want to change this behavior you can create your own storage by implementing `IMemoStorage` interface.
+
+#### Example of using @Memoize with Dates
+
+```typescript
+import { Memoize } from "sweet-decorators";
+import { promisify } from "util";
+
+const sleep = promisify(setTimeout);
+
+class Example {
+  @Memoize()
+  date() {
+    return new Date().toString();
+  }
+}
+
+const e = new Example();
+
+async function main() {
+  const now = e.date();
+
+  await sleep(10);
+
+  console.log(
+    e.date() === now, // 10 ms passed, but result remembered
+    now === new Date().toString()
+  );
+}
+
+main();
+// => true, false
+```
+
+#### Memo Tips & Best Practices
+
+1. You can bundle your fp methods to class, decorate, and then get methods back by using spreading.
+2. If you have troubles with returning cached result where is not supposed to do so, try reading [limitations](#memos-limitations) and writing your own memo store.
+3. `@Memoize` & `@MemoizeAsync` uses hooks `@Around` & `@Around` async under the hood. Please consider this while bundling your code.
