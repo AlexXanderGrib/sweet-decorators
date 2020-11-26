@@ -5,7 +5,7 @@
 [![GitHub](https://img.shields.io/github/stars/AlexXanderGrib/sweet-decorators?style=flat-square)](https://github.com/AlexXanderGrib/sweet-decorators)
 [![last commit](https://img.shields.io/github/last-commit/AlexXanderGrib/sweet-decorators?style=flat-square)](#)
 
-It's a collection of most common used typescript decorators.
+Collection of most common used **typescript** & javascript **patterns** provided in convenient format of **decorators**.
 
 ## Before You Begin
 
@@ -36,9 +36,11 @@ yarn add sweet-decorators
       - [Meta assignment and reading tips and best practices](#meta-assignment-and-reading-tips-and-best-practices)
   - [`@MapErrors` and `@MapErrorsAsync`](#maperrors-and-maperrorsasync)
       - [`@MapErrors` tips and best practices](#maperrors-tips-and-best-practices)
-  - [Class `DIContainer`](#class-dicontainer)
+  - [Dependency injection via `DIContainer`](#dependency-injection-via-dicontainer)
       - [Example of injection of simple value](#example-of-injection-of-simple-value)
       - [Example of providing a class](#example-of-providing-a-class)
+      - [Example of usage `injectAsync` method](#example-of-usage-injectasync-method)
+      - [Tips & best practices of DI](#tips--best-practices-of-di)
   - [Method hooks: `@Before`, `@After`, `@Around`, `@BeforeAsync`, `@AfterAsync`, `@AroundAsync`](#method-hooks-before-after-around-beforeasync-afterasync-aroundasync)
       - [Simple Hooks Example](#simple-hooks-example)
       - [User Service Example](#user-service-example)
@@ -193,9 +195,9 @@ app.post("/finish-3ds", async (req, res) => {
 3. Mapper must not throw an error
 4. Mapper must not have slow side effects (be perfect if the only side effect is sync & atomic logging)
 
-## Class `DIContainer`
+## Dependency injection via `DIContainer`
 
-This is simple implementation of `dependency injection` pattern in typescript without assigning any metadata.
+This is simple implementation of **`dependency injection`** pattern in typescript **`without assigning any metadata`**.
 
 #### Example of injection of simple value
 
@@ -254,6 +256,55 @@ class Database {
   /* ... logic ... */
 }
 ```
+
+#### Example of usage `injectAsync` method
+
+```typescript
+import { DIContainer } from "sweet-decorators";
+
+const container = new DIContainer();
+
+setTimeout(
+  () =>
+    container.provide(
+      "DB_SERVICE",
+      new DB({
+        /* ... */
+      })
+    ),
+  5000
+);
+
+async function main() {
+  const start = Date.now();
+
+  const db = await container.injectAsync("DB_SERVICE");
+
+  const time = Date.now() - start;
+
+  console.log(time);
+
+  /* logic */
+}
+
+main();
+// => 5005
+```
+
+#### Tips & best practices of DI
+
+Common tips applicable to any realization of DI in TS.
+
+1. Provide `classes`, inject `interfaces`
+2. Do not be afraid of using `Symbols` as keys
+3. Make sure to have at least runtime check of dependency (ex. dep is not `undefined`)
+
+Tips for using my realization of DI.
+
+1. If you're injecting dependency as property, please add `!`, to indicate TS that property will not be initialized in constructor
+2. Check property dependencies in runtime, because they provided `asynchronously by getter`
+3. If you want to get dependencies reliably, you can use `injectAsync` method
+4. If dependency, that `injectAsync` method is waiting for, is not provided, it may hang execution of your code
 
 ## Method hooks: `@Before`, `@After`, `@Around`, `@BeforeAsync`, `@AfterAsync`, `@AroundAsync`
 
