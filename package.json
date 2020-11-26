@@ -1,6 +1,6 @@
 {
   "name": "sweet-decorators",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Library of utility typescript decorators",
   "main": "dist/index.js",
   "type": "commonjs",
