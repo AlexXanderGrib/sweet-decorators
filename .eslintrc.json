@@ -31,7 +31,8 @@
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-types": "off",
-    "new-cap": "off"
+    "new-cap": "off",
+    "security/detect-object-injection": "off"
   },
   "overrides": [
     {
