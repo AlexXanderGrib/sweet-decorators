@@ -5,10 +5,7 @@ type UnsubscribeCallback = () => void;
 /**
  * Dependency injection container
  */
-export class DIContainer<
-  Key extends string | symbol = string | symbol,
-  Value extends any = any
-> {
+export class DIContainer<Key = any, Value = any> {
   public readonly deps = new Map<Key, Reference<Value | undefined>>();
   private provideHandlers: ProvideHandler[] = [];
 
@@ -49,8 +46,8 @@ export class DIContainer<
    * @param {Key} name
    * @return {Value | undefined} value
    */
-  public inject(name: Key): Value | undefined {
-    return this.getRef(name).value;
+  public inject<T extends Value = Value>(name: Key): T | undefined {
+    return this.getRef(name).value as T;
   }
 
   /**
@@ -109,8 +106,8 @@ export class DIContainer<
    * @return {Promise<*>}
    */
   public injectAsync<T extends Value = Value>(dependency: Key): Promise<T> {
-    return new Promise<any>((resolve) => {
-      if (this.deps.has(dependency)) return resolve(this.inject(dependency));
+    return new Promise<T>((resolve) => {
+      if (this.deps.has(dependency)) return resolve(this.inject<T>(dependency) as T);
 
       const unsubscribe = this.subscribe((key, value) => {
         if (key === dependency) {
