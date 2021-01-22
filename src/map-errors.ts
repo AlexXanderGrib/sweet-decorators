@@ -1,3 +1,5 @@
+import { Around, AroundAsync } from "./hooks";
+
 /**
  * Method decorator that applies mappers to change & intercept method's errors
  *
@@ -9,25 +11,19 @@
 export function MapErrors(
   ...interceptors: ((error: Error) => Error | undefined)[]
 ): MethodDecorator {
-  return function (_target, _property, desc) {
-    const function_ = (desc.value as any) as Function;
+  return Around((method, ...parameters) => {
+    try {
+      return method(...parameters);
+    } catch (error) {
+      for (const interceptor of interceptors) {
+        const result = interceptor(error);
 
-    (desc as any).value = function (...arguments_: any[]) {
-      try {
-        return function_.apply(this, arguments_);
-      } catch (error) {
-        for (const interceptor of interceptors) {
-          const result = interceptor(error);
-
-          if (result) throw result;
-        }
-
-        throw error;
+        if (result) throw result;
       }
-    };
 
-    return desc;
-  };
+      throw error;
+    }
+  });
 }
 
 /**
@@ -43,23 +39,17 @@ export function MapErrorsAsync(
     error: Error
   ) => Error | undefined | Promise<Error | undefined>)[]
 ): MethodDecorator {
-  return function (_target, _property, desc) {
-    const function_ = (desc.value as any) as Function;
+  return AroundAsync(async (method, ...parameters) => {
+    try {
+      return await method(...parameters);
+    } catch (error) {
+      for (const interceptor of interceptors) {
+        const result = await interceptor(error);
 
-    (desc as any).value = async function (...arguments_: any[]) {
-      try {
-        return await function_.apply(this, arguments_);
-      } catch (error) {
-        for (const interceptor of interceptors) {
-          const result = await interceptor(error);
-
-          if (result) throw result;
-        }
-
-        throw error;
+        if (result) throw result;
       }
-    };
 
-    return desc;
-  };
+      throw error;
+    }
+  });
 }

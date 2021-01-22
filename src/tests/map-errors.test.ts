@@ -12,18 +12,22 @@ const badErrorMapper = (error: Error) =>
   error instanceof BadError ? new AltError(error.message) : undefined;
 
 class Test {
+  private nested() {
+    throw new BadError();
+  }
+
   @MapErrors(mockErrorMapper, badErrorMapper)
   sync(expected = true) {
     if (expected) throw new MockError();
 
-    throw new BadError();
+    this.nested();
   }
 
   @MapErrorsAsync(mockErrorMapper, badErrorMapper)
   async async(expected = true) {
     if (expected) throw new MockError();
 
-    throw new BadError();
+    this.nested();
   }
 }
 
