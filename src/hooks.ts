@@ -12,12 +12,12 @@
  * @return {MethodDecorator}
  */
 export function Before(callback: (...parameters: any[]) => void): MethodDecorator {
-  return function (_target, _property, descriptor) {
-    const function_ = (descriptor.value as any) as Function;
+  return function (target, _property, descriptor) {
+    const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = function (...parameters: any[]) {
-      callback.apply(this, parameters);
-      return function_.apply(this, parameters);
+      callback.apply(target, parameters);
+      return method.apply(target, parameters);
     };
 
     return descriptor;
@@ -35,12 +35,12 @@ export function Before(callback: (...parameters: any[]) => void): MethodDecorato
 export function After(
   callback: (result: any, ...parameters: any[]) => void
 ): MethodDecorator {
-  return function (_target, _property, descriptor) {
-    const function_ = (descriptor.value as any) as Function;
+  return function (target, _property, descriptor) {
+    const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = function (...parameters: any[]) {
-      const result = function_.apply(this, parameters);
-      callback.call(this, result, ...parameters);
+      const result = method.apply(target, parameters);
+      callback.call(target, result, ...parameters);
 
       return result;
     };
@@ -60,11 +60,11 @@ export function After(
 export function Around(
   callback: (method: Function, ...parameters: any[]) => any
 ): MethodDecorator {
-  return function (_target, _property, descriptor) {
-    const function_ = (descriptor.value as any) as Function;
+  return function (target, _property, descriptor) {
+    const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = function (...parameters: any[]) {
-      return callback.call(this, function_.bind(this), ...parameters);
+      return callback.call(target, method.bind(target), ...parameters);
     };
 
     return descriptor;
@@ -81,12 +81,12 @@ export function Around(
 export function BeforeAsync(
   callback: (...parameters: any[]) => void | Promise<void>
 ): MethodDecorator {
-  return function (_target, _property, descriptor) {
-    const function_ = (descriptor.value as any) as Function;
+  return function (target, _property, descriptor) {
+    const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = async function (...parameters: any[]) {
-      await callback.apply(this, parameters);
-      return await function_.apply(this, parameters);
+      await callback.apply(target, parameters);
+      return await method.apply(target, parameters);
     };
 
     return descriptor;
@@ -103,12 +103,12 @@ export function BeforeAsync(
 export function AfterAsync(
   callback: (result: any, ...parameters: any[]) => void | Promise<void>
 ): MethodDecorator {
-  return function (_target, _property, desc) {
-    const function_ = (desc.value as any) as Function;
+  return function (target, _property, desc) {
+    const method = (desc.value as any) as Function;
 
     (desc as any).value = async function (...parameters: any[]) {
-      const result = await function_.apply(this, parameters);
-      await callback.call(this, result, ...parameters);
+      const result = await method.apply(target, parameters);
+      await callback.call(target, result, ...parameters);
 
       return result;
     };
@@ -127,11 +127,11 @@ export function AfterAsync(
 export function AroundAsync(
   callback: (method: Function, ...parameters: any[]) => any | Promise<any>
 ): MethodDecorator {
-  return function (_target, _property, descriptor) {
-    const function_ = (descriptor.value as any) as Function;
+  return function (target, _property, descriptor) {
+    const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = async function (...parameters: any[]) {
-      return await callback.call(this, function_.bind(this), ...parameters);
+      return await callback.call(target, method.bind(target), ...parameters);
     };
 
     return descriptor;
