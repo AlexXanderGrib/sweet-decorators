@@ -7,6 +7,15 @@
 
 Collection of most common used **typescript** & javascript **patterns** provided in convenient format of **decorators**.
 
+### Fast Q&A
+
+| Question                | Answer                                                                                                           |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Why use this lib?       | To make your code more clean & concise                                                                           |
+| Is it **treeshakable**? | Yes, but [`Hooks`](#method-hooks-before-after-around-beforeasync-afterasync-aroundasync) will be included anyway |
+| Where are the docs?     | Here, in README, continue reading                                                                                |
+| Is it production-ready? | Maybe. All features are simple as a stick & everything described                                                 |
+
 ## Before You Begin
 
 **⚠️ Please, consider to read [Microsoft's article about Decorators Composition](https://www.typescriptlang.org/docs/handbook/decorators.html#decorator-composition) ⚠️**
@@ -26,6 +35,7 @@ yarn add sweet-decorators
 ### 📕 Table of contents
 
 - [🍬 Sweet Decorators Lib](#-sweet-decorators-lib)
+    - [Fast Q&A](#fast-qa)
   - [Before You Begin](#before-you-begin)
     - [📦 Installation (`npm`)](#-installation-npm)
     - [📦 Installation (`yarn`)](#-installation-yarn)
