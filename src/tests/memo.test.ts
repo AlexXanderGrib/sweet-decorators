@@ -1,24 +1,34 @@
 import { Memoize, MemoizeAsync } from "../memo";
 
 class Test {
+  private y = 42;
+
+  private date() {
+    return Date.now();
+  }
+
+  private rand() {
+    return Math.random();
+  }
+
   @Memoize()
   notMemoSync(x: number) {
-    return Math.random() * x;
+    return this.rand() * x + this.y;
   }
 
   @Memoize()
   memoSync(x: number) {
-    return x * 5000;
+    return x * 5000 + this.y;
   }
 
   @MemoizeAsync()
   async notMemoAsync(x: number) {
-    return Date.now() * x;
+    return this.date() * x + this.y;
   }
 
   @MemoizeAsync()
   async memoAsync(x: number) {
-    return x * 8000;
+    return x * 8000 + this.y;
   }
 }
 
