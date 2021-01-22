@@ -9,7 +9,7 @@ class X {
   @container.Inject("test")
   public isTest!: boolean;
 }
-
+@container.Provide(Y)
 class Y {
   @container.Inject("X")
   public x!: X;
@@ -17,7 +17,7 @@ class Y {
 
 describe("DI", () => {
   test("Simple Injection", () => {
-    const x = new X();
+    const x = container.inject<X>("X") as X;
 
     expect(x.isTest).toBe(true);
   });
@@ -36,5 +36,11 @@ describe("DI", () => {
     const x = await container.injectAsync<number>("SPECIAL_NUMBER");
 
     expect(x).toBe(value);
+  });
+
+  test("Class Injection by class ref", async () => {
+    const y = await container.injectAsync<Y>(Y);
+
+    expect(y).toBeInstanceOf(Y);
   });
 });
