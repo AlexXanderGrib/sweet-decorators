@@ -72,9 +72,7 @@ export class DIContainer<Key = any, Value = any> {
     const container = this;
 
     return function (target: any, key: string | symbol) {
-      const proto = Object.getPrototypeOf(target);
-
-      Object.defineProperty(proto, key, {
+      Object.defineProperty(target, key, {
         get: () => container.inject(name)
       });
     } as any;
