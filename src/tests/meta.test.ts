@@ -2,6 +2,10 @@ import { Assign, readMeta } from "../meta";
 
 const k = Symbol("KEY");
 
+function ComposedDecorator() {
+  return Assign("meta", "SomeMeta");
+}
+
 @Assign({ [k]: undefined })
 @Assign("a", "b")
 @Assign.test(true)
@@ -11,6 +15,10 @@ class Test {
   @Assign.isMethod(true)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   method() {}
+
+  @ComposedDecorator()
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  x() {}
 }
 
 const t = new Test();
@@ -25,6 +33,12 @@ describe("Meta", () => {
       b: "c",
       isMethod: true,
       [k]: k
+    });
+  });
+
+  test("Composed decorator", () => {
+    expect(readMeta(t.x)).toStrictEqual({
+      meta: "SomeMeta"
     });
   });
 });
