@@ -12,6 +12,8 @@ const badErrorMapper = (error: Error) =>
   error instanceof BadError ? new AltError(error.message) : undefined;
 
 class Test {
+  public y = 3;
+
   private nested() {
     throw new BadError();
   }
@@ -28,6 +30,13 @@ class Test {
     if (expected) throw new MockError();
 
     this.nested();
+  }
+
+  @MapErrors(mockErrorMapper)
+  context() {
+    if (this.y === 3) throw new MockError();
+
+    throw new BadError();
   }
 }
 
@@ -67,6 +76,14 @@ describe("Map Errors Decorator", () => {
       fail("Async bad error wasn't thrown");
     } catch (error) {
       expect(error).toBeInstanceOf(AltError);
+    }
+  });
+
+  test("Decorator does not interrupts `this`", () => {
+    try {
+      t.context();
+    } catch (error) {
+      expect(error).toBeInstanceOf(GoodError);
     }
   });
 });
