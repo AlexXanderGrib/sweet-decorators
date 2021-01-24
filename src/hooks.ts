@@ -16,8 +16,10 @@ export function Before(callback: (...parameters: any[]) => void): MethodDecorato
     const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = function (...parameters: any[]) {
-      callback.apply(target, parameters);
-      return method.apply(target, parameters);
+      const context = this || target;
+
+      callback.apply(context, parameters);
+      return method.apply(context, parameters);
     };
 
     return descriptor;
@@ -39,8 +41,10 @@ export function After(
     const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = function (...parameters: any[]) {
-      const result = method.apply(target, parameters);
-      callback.call(target, result, ...parameters);
+      const context = this || target;
+
+      const result = method.apply(context, parameters);
+      callback.call(context, result, ...parameters);
 
       return result;
     };
@@ -60,11 +64,12 @@ export function After(
 export function Around(
   callback: (method: Function, ...parameters: any[]) => any
 ): MethodDecorator {
-  return function (target, _property, descriptor) {
+  return function (this: any, target, _property, descriptor) {
     const method = (descriptor.value as any) as Function;
-
     (descriptor as any).value = function (...parameters: any[]) {
-      return callback.call(target, method.bind(target), ...parameters);
+      const context = this || target;
+
+      return callback.call(context, method.bind(context), ...parameters);
     };
 
     return descriptor;
@@ -85,8 +90,9 @@ export function BeforeAsync(
     const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = async function (...parameters: any[]) {
-      await callback.apply(target, parameters);
-      return await method.apply(target, parameters);
+      const context = this || target;
+      await callback.apply(context, parameters);
+      return await method.apply(context, parameters);
     };
 
     return descriptor;
@@ -107,8 +113,9 @@ export function AfterAsync(
     const method = (desc.value as any) as Function;
 
     (desc as any).value = async function (...parameters: any[]) {
-      const result = await method.apply(target, parameters);
-      await callback.call(target, result, ...parameters);
+      const context = this || target;
+      const result = await method.apply(context, parameters);
+      await callback.call(context, result, ...parameters);
 
       return result;
     };
@@ -131,7 +138,8 @@ export function AroundAsync(
     const method = (descriptor.value as any) as Function;
 
     (descriptor as any).value = async function (...parameters: any[]) {
-      return await callback.call(target, method.bind(target), ...parameters);
+      const context = this || target;
+      return await callback.call(context, method.bind(context), ...parameters);
     };
 
     return descriptor;
