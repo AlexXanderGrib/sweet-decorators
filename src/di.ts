@@ -2,12 +2,29 @@ type ProvideHandler = (key: any, value: any) => void;
 type Reference<value> = { value: value };
 type UnsubscribeCallback = () => void;
 
+export interface IStore<K = any, V = any> {
+  get(key: K): V | undefined;
+  set(key: K, value: V): void;
+  forEach(callback: (value: V, key: K, store: IStore<K, V>) => void): void;
+  clone?(): IStore<K, V>;
+}
+
 /**
  * Dependency injection container
  */
 export class DIContainer<Key = any, Value = any> {
-  public readonly deps = new Map<Key, Reference<Value | undefined>>();
-  private provideHandlers: ProvideHandler[] = [];
+  protected _provideHandlers: ProvideHandler[] = [];
+
+  /**
+   * Container constructor
+   * @param {IStore} _dependencies Representation of the storage. Default - `new Map`
+   */
+  constructor(
+    private readonly _dependencies: IStore = new Map<
+      Key,
+      Reference<Value | undefined>
+    >()
+  ) {}
 
   /**
    * Used to inject a permanent reference to value.
@@ -18,8 +35,8 @@ export class DIContainer<Key = any, Value = any> {
    * @return {Reference<Value | undefined>} Object that references to value
    */
   public getRef(name: Key): Reference<Value | undefined> {
-    const reference = this.deps.get(name) || { value: undefined };
-    this.deps.set(name, reference);
+    const reference = this._dependencies.get(name) || { value: undefined };
+    this._dependencies.set(name, reference);
 
     return reference;
   }
@@ -35,7 +52,7 @@ export class DIContainer<Key = any, Value = any> {
 
     reference.value = value;
 
-    this.provideHandlers.forEach((callback) => callback(name, value));
+    this._provideHandlers.forEach((callback) => callback(name, value));
   }
 
   /**
@@ -105,7 +122,7 @@ export class DIContainer<Key = any, Value = any> {
    */
   public injectAsync<T extends Value = Value>(dependency: Key): Promise<T> {
     return new Promise<T>((resolve) => {
-      if (this.deps.has(dependency)) return resolve(this.inject<T>(dependency) as T);
+      if (this.inject(dependency)) return resolve(this.inject<T>(dependency) as T);
 
       const unsubscribe = this.subscribe((key, value) => {
         if (key === dependency) {
@@ -124,10 +141,10 @@ export class DIContainer<Key = any, Value = any> {
    * @return {UnsubscribeCallback} Unsubscribe function
    */
   public subscribe(callback: ProvideHandler): UnsubscribeCallback {
-    this.provideHandlers.push(callback);
+    this._provideHandlers.push(callback);
 
     return () => {
-      this.provideHandlers = this.provideHandlers.filter(
+      this._provideHandlers = this._provideHandlers.filter(
         (function_) => function_ !== callback
       );
     };
@@ -140,5 +157,26 @@ export class DIContainer<Key = any, Value = any> {
    */
   private _instantiate(target: any): any {
     return new target();
+  }
+
+  /**
+   * @return {DIContainer<Key, Value>} Copy of current container
+   */
+  public clone(): DIContainer<Key, Value> {
+    let dependenciesClone: IStore<Key, Reference<Value | undefined>>;
+
+    if (this._dependencies.clone) {
+      dependenciesClone = this._dependencies.clone();
+    } else if (this._dependencies instanceof Map) {
+      dependenciesClone = new Map<Key, Reference<Value | undefined>>(
+        this._dependencies
+      );
+    } else {
+      dependenciesClone = new Map<Key, Reference<Value | undefined>>();
+
+      this._dependencies.forEach((value, key) => dependenciesClone.set(key, value));
+    }
+
+    return new DIContainer<Key, Value>(dependenciesClone);
   }
 }
