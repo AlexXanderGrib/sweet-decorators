@@ -1,3 +1,5 @@
+import { methodDecorator } from "./sdk";
+
 // IDK how to test this decorators.
 // Because it's impossible to create inline(or simply not global)
 // class with decorators.
@@ -12,18 +14,12 @@
  * @return {MethodDecorator}
  */
 export function Before(callback: (...parameters: any[]) => void): MethodDecorator {
-  return function (target, _property, descriptor) {
-    const method = (descriptor.value as any) as Function;
-
-    (descriptor as any).value = function (...parameters: any[]) {
-      const context = this || target;
-
+  return methodDecorator((context) => {
+    context.replace(({ context, original, parameters }) => {
       callback.apply(context, parameters);
-      return method.apply(context, parameters);
-    };
-
-    return descriptor;
-  };
+      return original.apply(context, parameters);
+    });
+  });
 }
 
 /**
@@ -37,20 +33,14 @@ export function Before(callback: (...parameters: any[]) => void): MethodDecorato
 export function After(
   callback: (result: any, ...parameters: any[]) => void
 ): MethodDecorator {
-  return function (target, _property, descriptor) {
-    const method = (descriptor.value as any) as Function;
-
-    (descriptor as any).value = function (...parameters: any[]) {
-      const context = this || target;
-
-      const result = method.apply(context, parameters);
+  return methodDecorator((context) => {
+    context.replace(({ context, original, parameters }) => {
+      const result = original.apply(context, parameters);
       callback.call(context, result, ...parameters);
 
       return result;
-    };
-
-    return descriptor;
-  };
+    });
+  });
 }
 
 /**
@@ -64,16 +54,11 @@ export function After(
 export function Around(
   callback: (method: Function, ...parameters: any[]) => any
 ): MethodDecorator {
-  return function (this: any, target, _property, descriptor) {
-    const method = (descriptor.value as any) as Function;
-    (descriptor as any).value = function (...parameters: any[]) {
-      const context = this || target;
-
-      return callback.call(context, method.bind(context), ...parameters);
-    };
-
-    return descriptor;
-  };
+  return methodDecorator((context) => {
+    context.replace(({ context, original, parameters }) => {
+      return callback.call(context, original.bind(context), ...parameters);
+    });
+  });
 }
 
 /**
@@ -86,17 +71,12 @@ export function Around(
 export function BeforeAsync(
   callback: (...parameters: any[]) => void | Promise<void>
 ): MethodDecorator {
-  return function (target, _property, descriptor) {
-    const method = (descriptor.value as any) as Function;
-
-    (descriptor as any).value = async function (...parameters: any[]) {
-      const context = this || target;
+  return methodDecorator((context) => {
+    context.replace(async ({ context, original, parameters }) => {
       await callback.apply(context, parameters);
-      return await method.apply(context, parameters);
-    };
-
-    return descriptor;
-  };
+      return await original.apply(context, parameters);
+    });
+  });
 }
 
 /**
@@ -109,19 +89,14 @@ export function BeforeAsync(
 export function AfterAsync(
   callback: (result: any, ...parameters: any[]) => void | Promise<void>
 ): MethodDecorator {
-  return function (target, _property, desc) {
-    const method = (desc.value as any) as Function;
-
-    (desc as any).value = async function (...parameters: any[]) {
-      const context = this || target;
-      const result = await method.apply(context, parameters);
+  return methodDecorator((context) => {
+    context.replace(async ({ context, original, parameters }) => {
+      const result = await original.apply(context, parameters);
       await callback.call(context, result, ...parameters);
 
       return result;
-    };
-
-    return desc;
-  };
+    });
+  });
 }
 
 /**
@@ -134,14 +109,9 @@ export function AfterAsync(
 export function AroundAsync(
   callback: (method: Function, ...parameters: any[]) => any | Promise<any>
 ): MethodDecorator {
-  return function (target, _property, descriptor) {
-    const method = (descriptor.value as any) as Function;
-
-    (descriptor as any).value = async function (...parameters: any[]) {
-      const context = this || target;
-      return await callback.call(context, method.bind(context), ...parameters);
-    };
-
-    return descriptor;
-  };
+  return methodDecorator((context) => {
+    context.replace(async ({ context, original, parameters }) => {
+      return await callback.call(context, original.bind(context), ...parameters);
+    });
+  });
 }
