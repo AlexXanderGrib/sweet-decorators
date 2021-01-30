@@ -38,6 +38,13 @@ class Test {
 
     throw new BadError();
   }
+
+  @MapErrorsAsync(mockErrorMapper)
+  async asyncContext() {
+    if (this.y === 3) throw new MockError();
+
+    throw new BadError();
+  }
 }
 
 const t = new Test();
@@ -82,6 +89,14 @@ describe("Map Errors Decorator", () => {
   test("Decorator does not interrupts `this`", () => {
     try {
       t.context();
+    } catch (error) {
+      expect(error).toBeInstanceOf(GoodError);
+    }
+  });
+
+  test("Async decorator does not interrupts `this`", async () => {
+    try {
+      await t.asyncContext();
     } catch (error) {
       expect(error).toBeInstanceOf(GoodError);
     }
