@@ -1,3 +1,4 @@
+export * from "./advanced-di";
 export * from "./di";
 export * from "./hooks";
 export * from "./logger";
