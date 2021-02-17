@@ -5,7 +5,7 @@
 [![GitHub](https://img.shields.io/github/stars/AlexXanderGrib/sweet-decorators?style=flat-square)](https://github.com/AlexXanderGrib/sweet-decorators)
 [![last commit](https://img.shields.io/github/last-commit/AlexXanderGrib/sweet-decorators?style=flat-square)](#)
 
-Collection of most common used **typescript** & javascript **patterns** provided in convenient format of **decorators**.
+**Zero dependency** collection of common used **typescript** & javascript **patterns** provided in convenient format of **decorators**.
 
 ### Fast Q&A
 
@@ -314,7 +314,7 @@ Tips for using my realization of DI.
 1. If you're injecting dependency as property, please add `!`, to indicate TS that property will not be initialized in constructor
 2. Check property dependencies in runtime, because they provided `asynchronously by getter`
 3. If you want to get dependencies reliably, you can use `injectAsync` method
-4. If dependency, that `injectAsync` method is waiting for, is not provided, it may hang execution of your code
+4. If dependency, that `injectAsync` method is waiting for, is not provided, it will hang execution of your code
 
 ## Method hooks: `@Before`, `@After`, `@Around`, `@BeforeAsync`, `@AfterAsync`, `@AroundAsync`
 
