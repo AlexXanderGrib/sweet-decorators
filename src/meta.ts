@@ -5,6 +5,17 @@ type Key = string | symbol | number;
 
 /**
  *
+ *
+ * @param {*} object
+ * @param {Key} key
+ * @return {boolean}
+ */
+function hasKey<T extends Key>(object: any, key: T): object is Record<T, unknown> {
+  return Object.prototype.hasOwnProperty.call(object, key);
+}
+
+/**
+ *
  * @param {*} subject
  * @param {Key | object} key
  * @param {*} value
@@ -13,7 +24,7 @@ type Key = string | symbol | number;
 function assignMeta(subject: any, key: Key | object, value?: any) {
   const object = typeof key === "object" ? key : { [key]: value };
 
-  if (kMeta in subject && typeof subject[kMeta] === "object") {
+  if (hasKey(subject, kMeta) && typeof subject[kMeta] === "object") {
     Object.assign(subject[kMeta], object);
 
     return;
@@ -61,14 +72,14 @@ interface Assign {
  * @return {ClassAndMethodDecorator}
  */
 function assign(key: Key | object, value?: any): ClassAndMethodDecorator {
-  return function (target: any, _property: Key, desc: PropertyDescriptor) {
+  return ((target: any, _property: Key, desc: PropertyDescriptor) => {
     if (typeof target === "function") {
       assignMeta(target.prototype, key, value);
       return target;
     }
 
     assignMeta(desc.value, key, value);
-  } as any;
+  }) as any;
 }
 
 export const Assign: Assign = new Proxy(assign, {

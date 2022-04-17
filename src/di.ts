@@ -88,11 +88,11 @@ export class DIContainer<Key = any, Value = any> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const container = this;
 
-    return function (target: any, key: string | symbol) {
+    return (target: any, key: string | symbol) => {
       Object.defineProperty(target, key, {
         get: () => container.inject(name)
       });
-    } as any;
+    };
   }
 
   /**

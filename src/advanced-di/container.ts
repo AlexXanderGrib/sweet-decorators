@@ -217,10 +217,10 @@ export class AdvancedDIContainer<Key = any, Value = any> {
     subscription: Subscription<DependencyDescriptor<Key, Value>>
   ): VoidFunction {
     this._subscriptions.push(subscription);
-    const unsubscribeParent = this.parent && this.parent.subscribe(subscription);
+    const unsubscribeParent = this.parent?.subscribe(subscription);
 
     return () => {
-      unsubscribeParent && unsubscribeParent();
+      unsubscribeParent?.();
 
       this._subscriptions = this._subscriptions.filter(
         (sub) => sub !== subscription

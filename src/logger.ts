@@ -22,8 +22,8 @@ export const EmojiLogger: LoggerAdapter = {
   info: (...data: any[]) => console.log("ℹ️", ...data),
   message: (...data: any[]) => console.log("💬", ...data),
   warn: (...data: any[]) => console.log("⚠️", ...data),
-  startTimer: (name: string) => console.time("⏲️ " + name),
-  stopTimer: (name: string) => console.timeEnd("⏲️ " + name)
+  startTimer: (name: string) => console.time(`⏲️ ${name}`),
+  stopTimer: (name: string) => console.timeEnd(`⏲️ ${name}`)
 };
 
 export type LogType = "error" | "info" | "message" | "warn";

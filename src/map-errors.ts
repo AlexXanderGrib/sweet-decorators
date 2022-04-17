@@ -14,7 +14,7 @@ export function MapErrors(
   return Around((method, ...parameters) => {
     try {
       return method(...parameters);
-    } catch (error) {
+    } catch (error: any) {
       for (const interceptor of interceptors) {
         const result = interceptor(error);
 
@@ -42,7 +42,7 @@ export function MapErrorsAsync(
   return AroundAsync(async (method, ...parameters) => {
     try {
       return await method(...parameters);
-    } catch (error) {
+    } catch (error: any) {
       for (const interceptor of interceptors) {
         const result = await interceptor(error);
 

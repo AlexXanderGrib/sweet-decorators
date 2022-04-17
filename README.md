@@ -7,14 +7,18 @@
 
 **Zero dependency** collection of common used **typescript** & javascript **patterns** provided in convenient format of **decorators**.
 
-### Fast Q&A
+## Why use this lib?
 
-| Question                | Answer                                                                                                           |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Why use this lib?       | To make your code more clean & concise                                                                           |
-| Is it **treeshakable**? | Yes, but [`Hooks`](#method-hooks-before-after-around-beforeasync-afterasync-aroundasync) will be included anyway |
-| Where are the docs?     | Here, in README, continue reading                                                                                |
-| Is it production-ready? | Maybe. All features are simple as a stick & everything described                                                 |
+1. It can make your code more concise
+2. It is written in TypeScript and covered with tests
+3. It has `0` dependencies
+4. It is modular and tree-shakable - you don't have to use and ship unused parts
+
+### Why not
+
+1. Decorators proposal is not standardized
+2. TypeScript uses legacy version of it
+
 
 ## Before You Begin
 
@@ -35,7 +39,8 @@ yarn add sweet-decorators
 ### 📕 Table of contents
 
 - [🍬 Sweet Decorators Lib](#-sweet-decorators-lib)
-    - [Fast Q&A](#fast-qa)
+  - [Why use this lib?](#why-use-this-lib)
+    - [Why not](#why-not)
   - [Before You Begin](#before-you-begin)
     - [📦 Installation (`npm`)](#-installation-npm)
     - [📦 Installation (`yarn`)](#-installation-yarn)
@@ -129,12 +134,32 @@ class Human {
   walk() {}
 }
 
-const human = new Human();
+class Child extends Human {
+  @Assign({ isClumsy: true })
+  walk() {}
+}
 
+@Assign({ isFavorite: true })
+class FavoriteChild extends Human {
+
+}
+
+const human = new Human();
 console.log(readMeta(human));
 // => { BASE_BEHAVIOR: "passive", isTest: false, ErrorClass: Error }
-
 console.log(readMeta(human.walk));
+// => { IS_ACTION: true, ActionType: "MOVEMENT", Symbol(ENTITY_TOKEN): "X_HUMAN_ENTITY" }
+
+const child = new Child();
+console.log(readMeta(child));
+// => { BASE_BEHAVIOR: "passive", isTest: false, ErrorClass: Error }
+console.log(readMeta(child.walk));
+// => { isClumsy: true }
+
+const fav = new FavoriteChild();
+console.log(readMeta(child));
+// => { isFavorite: true }
+console.log(readMeta(child.walk));
 // => { IS_ACTION: true, ActionType: "MOVEMENT", Symbol(ENTITY_TOKEN): "X_HUMAN_ENTITY" }
 ```
 
@@ -143,6 +168,7 @@ console.log(readMeta(human.walk));
 1. Meta is accessible in other(upper) decorators
 2. If you need to set **more than 2** meta props, please use **object syntax**
 3. Use meta as simple **key/value dto storage**. Do not try to put here functions
+4. Meta is not inherited if overridden in child
 
 ## `@MapErrors` and `@MapErrorsAsync`
 

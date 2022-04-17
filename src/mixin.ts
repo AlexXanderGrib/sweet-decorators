@@ -5,7 +5,7 @@
  * @return {ClassDecorator}
  */
 export function Mixin(...classes: Function[]): ClassDecorator {
-  return function (target) {
+  return (target) => {
     classes.forEach((constructor) => {
       Object.getOwnPropertyNames(constructor.prototype).forEach((name) => {
         Object.defineProperty(

@@ -61,10 +61,14 @@ export function methodDecorator(
  *
  */
 export function classDecorator(
-  function_: (parameters: { target: Function; prototype: any; name: string }) => void
+  function_: (parameters: {
+    target: Function;
+    prototype: any;
+    name: string;
+  }) => void | Function
 ): ClassDecorator {
   return (target) =>
-    function_({ target, prototype: target.prototype, name: target.name });
+    function_({ target, prototype: target.prototype, name: target.name }) as any;
 }
 
 type ParameterReplacementParameters = MethodReplacementParameters & {

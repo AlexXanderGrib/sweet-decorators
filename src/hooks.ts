@@ -13,7 +13,9 @@ import { methodDecorator } from "./sdk";
  * @param {Function} callback Callback that receives all method's parameters
  * @return {MethodDecorator}
  */
-export function Before(callback: (...parameters: any[]) => void): MethodDecorator {
+export function Before(
+  callback: (this: any, ...parameters: any[]) => void
+): MethodDecorator {
   return methodDecorator((context) => {
     context.replace(({ context, original, parameters }) => {
       callback.apply(context, parameters);
@@ -31,7 +33,7 @@ export function Before(callback: (...parameters: any[]) => void): MethodDecorato
  * @return {MethodDecorator}
  */
 export function After(
-  callback: (result: any, ...parameters: any[]) => void
+  callback: (this: any, result: any, ...parameters: any[]) => void
 ): MethodDecorator {
   return methodDecorator((context) => {
     context.replace(({ context, original, parameters }) => {
@@ -52,12 +54,12 @@ export function After(
  * @return {MethodDecorator}
  */
 export function Around(
-  callback: (method: Function, ...parameters: any[]) => any
+  callback: (this: any, method: Function, ...parameters: any[]) => any
 ): MethodDecorator {
   return methodDecorator((context) => {
-    context.replace(({ context, original, parameters }) => {
-      return callback.call(context, original.bind(context), ...parameters);
-    });
+    context.replace(({ context, original, parameters }) =>
+      callback.call(context, original.bind(context), ...parameters)
+    );
   });
 }
 
@@ -69,7 +71,7 @@ export function Around(
  * @return {MethodDecorator}
  */
 export function BeforeAsync(
-  callback: (...parameters: any[]) => void | Promise<void>
+  callback: (this: any, ...parameters: any[]) => void | Promise<void>
 ): MethodDecorator {
   return methodDecorator((context) => {
     context.replace(async ({ context, original, parameters }) => {
@@ -87,7 +89,7 @@ export function BeforeAsync(
  * @return {MethodDecorator}
  */
 export function AfterAsync(
-  callback: (result: any, ...parameters: any[]) => void | Promise<void>
+  callback: (this: any, result: any, ...parameters: any[]) => void | Promise<void>
 ): MethodDecorator {
   return methodDecorator((context) => {
     context.replace(async ({ context, original, parameters }) => {
@@ -107,11 +109,34 @@ export function AfterAsync(
  * @return {MethodDecorator}
  */
 export function AroundAsync(
-  callback: (method: Function, ...parameters: any[]) => any | Promise<any>
+  callback: (this: any, method: Function, ...parameters: any[]) => any | Promise<any>
 ): MethodDecorator {
   return methodDecorator((context) => {
-    context.replace(async ({ context, original, parameters }) => {
-      return await callback.call(context, original.bind(context), ...parameters);
-    });
+    context.replace(
+      async ({ context, original, parameters }) =>
+        await callback.call(context, original.bind(context), ...parameters)
+    );
   });
+}
+
+/**
+ *
+ * @param {Function} callback
+ * @return {ClassDecorator}
+ */
+export function AfterConstructor(
+  callback: (this: any, ...parameters: any[]) => void
+): ClassDecorator {
+  return (classObject: any) =>
+    class extends classObject {
+      /**
+       * Dummy constructor
+       * @param {...any[]} parameters
+       */
+      constructor(...parameters: any[]) {
+        super(...parameters);
+
+        callback(...parameters);
+      }
+    } as any;
 }
